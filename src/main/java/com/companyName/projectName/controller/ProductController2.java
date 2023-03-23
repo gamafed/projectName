@@ -2,6 +2,8 @@ package com.companyName.projectName.controller;
 
 import com.companyName.projectName.entity.Product;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
+import com.companyName.projectName.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,44 +18,24 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "/products", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProductController2 {
-    private final List<Product> productDB = new ArrayList<>();
-    @PostConstruct
-    private void initDB() {
-        productDB.add(new Product("B0001", "Android Development (Java)", 380));
-        productDB.add(new Product("B0002", "Android Development (Kotlin)", 420));
-        productDB.add(new Product("B0003", "Data Structure (Java)", 250));
-        productDB.add(new Product("B0004", "Finance Management", 450));
-        productDB.add(new Product("B0005", "Human Resource Management", 330));
-        System.out.println("PostConstruct ended!");
-    }
+    @Autowired
+    private ProductService productService;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
-        Optional<Product> productOpt = productDB.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
+        Product product = productService.getProduct(id);
+        return ResponseEntity.ok(product);
+    }
 
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
-            return ResponseEntity.ok().body(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping
+    public ResponseEntity<List<Product>> getProducts(@ModelAttribute ProductQueryParameter param) {
+        List<Product> products = productService.getProducts(param);
+        return ResponseEntity.ok(products);
     }
 
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product request) {
-        boolean isIdDuplicated = productDB.stream()
-                .anyMatch(p -> p.getId().equals(request.getId()));
-        if (isIdDuplicated) {
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        }
-
-        Product product = new Product();
-        product.setId(request.getId());
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        productDB.add(product);
+        Product product = productService.createProduct(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -67,60 +49,14 @@ public class ProductController2 {
     @PutMapping("/{id}")
     public ResponseEntity<Product> replaceProduct(
             @PathVariable("id") String id, @RequestBody Product request) {
-        Optional<Product> productOpt = productDB.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
-
-        if (productOpt.isPresent()) {
-            Product product = productOpt.get();
-            product.setName(request.getName());
-            product.setPrice(request.getPrice());
-
-            return ResponseEntity.ok().body(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Product product = productService.replaceProduct(id, request);
+        return ResponseEntity.ok(product);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") String id) {
-        boolean isRemoved = productDB.removeIf(p -> p.getId().equals(id));
-
-        return isRemoved
-                ? ResponseEntity.noContent().build()
-                : ResponseEntity.notFound().build();
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Product>> getProducts(@ModelAttribute ProductQueryParameter param) {
-        String keyword = param.getKeyword();
-        String orderBy = param.getOrderBy();
-        String sortRule = param.getSortRule();
-        Comparator<Product> comparator = genSortComparator(orderBy, sortRule);
-
-        List<Product> products = productDB.stream()
-                .filter(p -> p.getName().toUpperCase().contains(keyword.toUpperCase()))
-                .sorted(comparator)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(products);
-    }
-
-    private Comparator<Product> genSortComparator(String orderBy, String sortRule) {
-        Comparator<Product> comparator = (p1, p2) -> 0;
-        if (Objects.isNull(orderBy) || Objects.isNull(sortRule)) {
-            return comparator;
-        }
-
-        if (orderBy.equalsIgnoreCase("price")) {
-            comparator = Comparator.comparing(Product::getPrice);
-        } else if (orderBy.equalsIgnoreCase("name")) {
-            comparator = Comparator.comparing(Product::getName);
-        }
-
-        return sortRule.equalsIgnoreCase("desc")
-                ? comparator.reversed()
-                : comparator;
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
     }
 
 }
