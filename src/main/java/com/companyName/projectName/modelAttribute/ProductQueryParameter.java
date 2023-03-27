@@ -9,7 +9,6 @@ public class ProductQueryParameter {
     private String keyword;
     private String orderBy;
     private String sortRule;
-    private int priceFrom;
-    @Unwrapped.Nullable
-    private int priceTo;
+    private Integer priceFrom;
+    private Integer priceTo;
 }
