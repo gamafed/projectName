@@ -161,15 +161,43 @@ public class ProductTest {
         /*junit 5 use*/
         Assertions.assertEquals(4, productIds.size());
         Assertions.assertAll("check id of order",
-                () -> Assertions.assertEquals(p2.getId(), productIds.get(0)),
-                () -> Assertions.assertEquals(p1.getId(), productIds.get(1)),
-                () -> Assertions.assertEquals(p4.getId(), productIds.get(2)),
-                () -> Assertions.assertEquals(p3.getId(), productIds.get(3))
+                () -> Assertions.assertEquals(p2.getId(), productIds.get(0),"1st should be p2"),
+                () -> Assertions.assertEquals(p1.getId(), productIds.get(1),"2nd should be p1"),
+                () -> Assertions.assertEquals(p4.getId(), productIds.get(2),"3rd should be p4"),
+                () -> Assertions.assertEquals(p3.getId(), productIds.get(3),"4th should be p3")
         );
         Assertions.assertEquals(HttpStatus.OK.value(), mockHttpResponse.getStatus());
         Assertions.assertEquals(MediaType.APPLICATION_JSON_VALUE,
                 mockHttpResponse.getHeader(HttpHeaders.CONTENT_TYPE));
 
         System.out.println("testSearchProductsSortByPriceAsc done");
+    }
+
+    @Test
+    public void get400WhenCreateProductWithEmptyName() throws Exception {
+        JSONObject request = new JSONObject()
+                .put("name", "")
+                .put("price", 350);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/products")
+                        .headers(httpHeaders)
+                        .content(request.toString()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void get400WhenReplaceProductWithNegativePrice() throws Exception {
+        Product product = createProduct("Computer Science", 350);
+        productRepository.insert(product);
+
+        JSONObject request = new JSONObject()
+                .put("name", "Computer Science")
+                .put("price", -100)
+                ;
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/products/" + product.getId())
+                        .headers(httpHeaders)
+                        .content(request.toString()))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

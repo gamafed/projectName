@@ -2,6 +2,7 @@ package com.companyName.projectName.controller;
 
 import com.companyName.projectName.entity.Product;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
+import com.companyName.projectName.request.ProductRequest;
 import com.companyName.projectName.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +36,7 @@ public class ProductController2 {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product request) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest request) {
         Product product = productService.createProduct(request);
 
         URI location = ServletUriComponentsBuilder
@@ -48,7 +50,7 @@ public class ProductController2 {
 
     @PutMapping("/{id}")
     public ResponseEntity<Product> replaceProduct(
-            @PathVariable("id") String id, @RequestBody Product request) {
+            @PathVariable("id") String id, @Valid @RequestBody ProductRequest request) {
         Product product = productService.replaceProduct(id, request);
         return ResponseEntity.ok(product);
     }

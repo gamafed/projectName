@@ -1,21 +1,22 @@
-package com.companyName.projectName.entity;
+package com.companyName.projectName.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "products")
-public class Product {
-    private String id;
-    private String name;
-    private int price;
+@NoArgsConstructor
+public class ProductRequest {
 
+    @NotEmpty(message = "Product name is undefined.")
+    private String name;
+
+    @NotNull
+    @Min(value = 0, message = "Price should be greater or equal to 0.")
+    private Integer price;
 }
