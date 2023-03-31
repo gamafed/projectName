@@ -17,13 +17,16 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@Service
+
 public class ProductService {
 
     @Autowired
     private MockProductDAO productDAO;
-    @Autowired
     private ProductRepository repository;
+
+    public ProductService(ProductRepository repository) {
+        this.repository = repository;
+    }
 
     public ProductResponse createProduct(ProductRequest request) {
 //        boolean isIdDuplicated = repository.findById(request.getId()).isPresent();

@@ -13,27 +13,16 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.util.Properties;
 
-@Service
 @Slf4j
 public class MailService {
 
     @Autowired
     private MailConfig mailConfig;
 
-    private JavaMailSenderImpl mailSender;
+    private final JavaMailSenderImpl mailSender;
 
-    @PostConstruct
-    private void init() {
-        mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(mailConfig.getHost());
-        mailSender.setPort(mailConfig.getPort());
-        mailSender.setUsername(mailConfig.getUsername());
-        mailSender.setPassword(mailConfig.getPassword());
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.smtp.auth", mailConfig.isAuthEnabled());
-        props.put("mail.smtp.starttls.enable", mailConfig.isStarttlsEnabled());
-        props.put("mail.transport.protocol", mailConfig.getProtocol());
+    public MailService(JavaMailSenderImpl mailSender){
+        this.mailSender = mailSender;
     }
 
     public void sendMail(SendMailRequest request) {
