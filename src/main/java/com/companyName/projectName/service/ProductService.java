@@ -8,6 +8,7 @@ import com.companyName.projectName.exception.UnprocessableEntityException;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.repository.ProductRepository;
 import com.companyName.projectName.request.ProductRequest;
+import com.companyName.projectName.response.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -24,15 +25,21 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
-    public Product createProduct(ProductRequest request) {
+    public ProductResponse createProduct(ProductRequest request) {
 //        boolean isIdDuplicated = repository.findById(request.getId()).isPresent();
 //        if (isIdDuplicated) {
 //            throw new UnprocessableEntityException("The id of the product is duplicated.");
 //        }
 
-        Product product = ProductConverter.toProduct(request);
+//        Product product = ProductConverter.toProduct(request);
+//        return repository.insert(product);
 
-        return repository.insert(product);
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setPrice(request.getPrice());
+        product = repository.insert(product);
+
+        return ProductConverter.toProductResponse(product);
     }
 
     public Product getProduct(String id) {
@@ -73,4 +80,9 @@ public class ProductService {
         return sort;
     }
 
+    public ProductResponse getProductResponse(String id) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Can't find product."));
+        return ProductConverter.toProductResponse(product);
+    }
 }

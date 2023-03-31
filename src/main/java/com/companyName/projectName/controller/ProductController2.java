@@ -3,6 +3,7 @@ package com.companyName.projectName.controller;
 import com.companyName.projectName.entity.Product;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.request.ProductRequest;
+import com.companyName.projectName.response.ProductResponse;
 import com.companyName.projectName.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,11 +24,11 @@ public class ProductController2 {
     @Autowired
     private ProductService productService;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
-        Product product = productService.getProduct(id);
-        return ResponseEntity.ok(product);
-    }
+//    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+//    public ResponseEntity<Product> getProduct(@PathVariable("id") String id) {
+//        Product product = productService.getProduct(id);
+//        return ResponseEntity.ok(product);
+//    }
 
     @GetMapping
     public ResponseEntity<List<Product>> getProducts(@ModelAttribute ProductQueryParameter param) {
@@ -35,9 +36,15 @@ public class ProductController2 {
         return ResponseEntity.ok(products);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") String id) {
+        ProductResponse product = productService.getProductResponse(id);
+        return ResponseEntity.ok(product);
+    }
+
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody ProductRequest request) {
-        Product product = productService.createProduct(request);
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
+        ProductResponse product = productService.createProduct(request);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
