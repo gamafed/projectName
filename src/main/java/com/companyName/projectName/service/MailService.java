@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailAuthenticationException;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.MailSender.*;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
+//import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.Properties;
 
 @Slf4j
 public class MailService {
@@ -24,6 +23,7 @@ public class MailService {
     private final JavaMailSenderImpl mailSender;
 
     public MailService(JavaMailSenderImpl mailSender){
+        System.out.println("mailSender = "+mailSender);
         this.tag = System.currentTimeMillis();
         this.mailSender = mailSender;
     }

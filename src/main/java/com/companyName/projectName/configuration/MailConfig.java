@@ -58,7 +58,7 @@ public class MailConfig {
 //        props.put("mail.smtp.auth", authEnabled);
 //        props.put("mail.smtp.starttls.enable", starttlsEnabled);
 //        props.put("mail.transport.protocol", protocol);
-
+        System.out.println("mailSender here "+mailSender);
         return new MailService(mailSender);
     }
 
