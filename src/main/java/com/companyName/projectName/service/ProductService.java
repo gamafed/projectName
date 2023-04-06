@@ -4,14 +4,12 @@ import com.companyName.projectName.converter.ProductConverter;
 import com.companyName.projectName.dao.MockProductDAO;
 import com.companyName.projectName.entity.Product;
 import com.companyName.projectName.exception.NotFoundException;
-import com.companyName.projectName.exception.UnprocessableEntityException;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.repository.ProductRepository;
 import com.companyName.projectName.request.ProductRequest;
 import com.companyName.projectName.response.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,12 +18,15 @@ import java.util.Optional;
 
 public class ProductService {
 
+
     @Autowired
     private MockProductDAO productDAO;
-    private ProductRepository repository;
+    private final ProductRepository repository;
+    private final MailService mailService;
 
-    public ProductService(ProductRepository repository) {
+    public ProductService(ProductRepository repository, MailService mailService) {
         this.repository = repository;
+        this.mailService = mailService;
     }
 
     public ProductResponse createProduct(ProductRequest request) {

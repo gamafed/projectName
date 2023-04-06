@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Properties;
 
 @Slf4j
@@ -19,9 +20,11 @@ public class MailService {
     @Autowired
     private MailConfig mailConfig;
 
+    private final long tag;
     private final JavaMailSenderImpl mailSender;
 
     public MailService(JavaMailSenderImpl mailSender){
+        this.tag = System.currentTimeMillis();
         this.mailSender = mailSender;
     }
 
@@ -39,6 +42,12 @@ public class MailService {
         } catch (Exception e) {
             log.warn(e.getMessage());
         }
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        System.out.println("##########");
+        System.out.printf("Spring Boot is about to destroy Mail Service %d.\n\n", tag);
     }
 
 
