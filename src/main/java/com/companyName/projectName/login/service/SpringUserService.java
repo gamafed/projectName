@@ -1,6 +1,7 @@
 package com.companyName.projectName.login.service;
 
 import com.companyName.projectName.login.entity.AppUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class SpringUserService implements UserDetailsService {
 
     @Autowired
@@ -25,6 +27,7 @@ public class SpringUserService implements UserDetailsService {
                 .map(auth -> new SimpleGrantedAuthority(auth.name()))
                 .collect(Collectors.toList());
 
+        log.info("appUser= "+appUser);
         return new User(appUser.getEmailAddress(), appUser.getPassword(), authorities);
     }
 }
