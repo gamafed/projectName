@@ -1,6 +1,7 @@
 package com.companyName.projectName.configuration;
 
 
+import com.companyName.projectName.filter.JWTAuthenticationFilter;
 import com.companyName.projectName.login.auth.UserAuthority;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,27 +12,38 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
+    @Autowired
+    private JWTAuthenticationFilter jwtAuthenticationFilter;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/users").hasAuthority(UserAuthority.ADMIN.name())
-                .antMatchers(HttpMethod.GET, "/users/*").authenticated()
-                .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth").permitAll()
-                .antMatchers(HttpMethod.POST, "/auth/parse").permitAll()
-                .anyRequest().authenticated()
+            .authorizeRequests()
+            .antMatchers(HttpMethod.GET, "/users").hasAuthority(UserAuthority.ADMIN.name())
+            .antMatchers(HttpMethod.GET, "/users/*").authenticated()
+            .antMatchers(HttpMethod.GET).permitAll()
+            .antMatchers(HttpMethod.POST, "/users").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth").permitAll()
+            .antMatchers(HttpMethod.POST, "/auth/parse").permitAll()
+            .anyRequest().authenticated()
                 .and()
-                .csrf().disable() //關閉對 CSRF（跨站請求偽造）攻擊的防護
-                .formLogin();
+                //UsernamePasswordAuthenticationFilter 是用來處理基於帳號密碼的驗證
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .csrf().disable(); //關閉對 CSRF（跨站請求偽造）攻擊的防護
+
     }
 
     @Override
@@ -41,9 +53,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(new BCryptPasswordEncoder());
     }
 
-    /*
-    * AuthenticationManager進行帳密驗證
-    */
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {

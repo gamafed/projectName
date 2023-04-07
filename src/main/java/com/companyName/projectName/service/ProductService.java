@@ -4,6 +4,7 @@ import com.companyName.projectName.converter.ProductConverter;
 import com.companyName.projectName.dao.MockProductDAO;
 import com.companyName.projectName.entity.Product;
 import com.companyName.projectName.exception.NotFoundException;
+import com.companyName.projectName.login.auth.UserIdentity;
 import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.repository.ProductRepository;
 import com.companyName.projectName.request.ProductRequest;
@@ -18,30 +19,24 @@ import java.util.Optional;
 
 public class ProductService {
 
-
+    private UserIdentity userIdentity;
     @Autowired
     private MockProductDAO productDAO;
     private final ProductRepository repository;
     private final MailService mailService;
 
-    public ProductService(ProductRepository repository, MailService mailService) {
+    public ProductService(ProductRepository repository, MailService mailService, UserIdentity userIdentity) {
         this.repository = repository;
         this.mailService = mailService;
+        this.userIdentity = userIdentity;
     }
 
     public ProductResponse createProduct(ProductRequest request) {
-//        boolean isIdDuplicated = repository.findById(request.getId()).isPresent();
-//        if (isIdDuplicated) {
-//            throw new UnprocessableEntityException("The id of the product is duplicated.");
-//        }
-
-//        Product product = ProductConverter.toProduct(request);
-//        return repository.insert(product);
-
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
+        Product product = ProductConverter.toProduct(request);
+        product.setCreator(userIdentity.getId());
         product = repository.insert(product);
+
+        mailService.sendNewProductMail(product.getId());
 
         return ProductConverter.toProductResponse(product);
     }

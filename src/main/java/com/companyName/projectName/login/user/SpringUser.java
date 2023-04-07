@@ -14,6 +14,14 @@ public class SpringUser implements UserDetails {
         this.appUser = appUser;
     }
 
+    public String getId() {
+        return appUser.getId();
+    }
+
+    public String getName() {
+        return appUser.getName();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return appUser.getAuthorities().stream()

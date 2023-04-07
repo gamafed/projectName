@@ -1,26 +1,35 @@
 package com.companyName.projectName;
 
+import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.http.HttpHeaders;
+import com.companyName.projectName.JWT.AuthRequest;
 import com.companyName.projectName.entity.Product;
+import com.companyName.projectName.login.auth.UserAuthority;
+import com.companyName.projectName.login.entity.AppUser;
+import com.companyName.projectName.login.repository.AppUserRepository;
 import com.companyName.projectName.repository.ProductRepository;
-import org.hamcrest.Matchers;
+import java.util.Collections;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.Arrays;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -32,6 +41,8 @@ public class ProductTest {
     private Product product = createProduct("Economics", 450);
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @BeforeEach
     public void init() {
@@ -66,17 +77,13 @@ public class ProductTest {
                         .headers(httpHeaders))
                 .andDo(MockMvcResultHandlers
                         .print())
-                .andExpect(MockMvcResultMatchers
-                        .status()
+                .andExpect(status()
                         .isOk())
-                .andExpect(MockMvcResultMatchers
-                        .jsonPath("$.id")
+                .andExpect(jsonPath("$.id")
                         .value(product.getId()))
-                .andExpect(MockMvcResultMatchers
-                        .jsonPath("$.name")
+                .andExpect(jsonPath("$.name")
                         .value(product.getName()))
-                .andExpect(MockMvcResultMatchers
-                        .jsonPath("$.price")
+                .andExpect(jsonPath("$.price")
                         .value(product.getPrice()));
         System.out.println("testCreateProduct done");
     }
@@ -93,10 +100,10 @@ public class ProductTest {
                         .put("/products/" + product.getId())
                         .headers(httpHeaders)
                         .content(request.toString()))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(product.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(request.getString("name")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(request.getInt("price")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(product.getId()))
+                .andExpect(jsonPath("$.name").value(request.getString("name")))
+                .andExpect(jsonPath("$.price").value(request.getInt("price")));
         System.out.println("testReplaceProduct done");
     }
 
@@ -107,7 +114,7 @@ public class ProductTest {
                         .headers(httpHeaders))
                 .andDo(MockMvcResultHandlers
                         .print())
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
+                .andExpect(status().isNoContent());
 
         Assertions.assertThrows(RuntimeException.class, () -> {
             productRepository
@@ -182,7 +189,7 @@ public class ProductTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/products")
                         .headers(httpHeaders)
                         .content(request.toString()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -198,6 +205,6 @@ public class ProductTest {
         mockMvc.perform(MockMvcRequestBuilders.put("/products/" + product.getId())
                         .headers(httpHeaders)
                         .content(request.toString()))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 }

@@ -1,11 +1,14 @@
 package com.companyName.projectName.configuration;
 
+import com.companyName.projectName.login.auth.UserIdentity;
 import com.companyName.projectName.service.MailService;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
@@ -17,6 +20,15 @@ public class MailConfig {
 
     @Value("${mail.platform}")
     private String platform;
+
+    @Value("${mail.auth.enabled}")
+    private boolean authEnabled;
+
+    @Value("${mail.starttls.enabled}")
+    private boolean starttlsEnabled;
+
+    @Value("${mail.protocol}")
+    private String protocol;
 
     @Value("${mail.gmail.host}")
     private String gmailHost;
@@ -49,17 +61,18 @@ public class MailConfig {
     public static final String YAHOO_MAIL_SERVICE = "yahooMailService";
 
     @Bean
-    public MailService mailService() {
+    @Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
+    public MailService mailService(UserIdentity userIdentity) {
         JavaMailSenderImpl mailSender = "gmail".equals(platform)
-                ? gmailSender()
-                : yahooSender();
+            ? gmailSender()
+            : yahooSender();
 
-//        Properties props = mailSender.getJavaMailProperties();
-//        props.put("mail.smtp.auth", authEnabled);
-//        props.put("mail.smtp.starttls.enable", starttlsEnabled);
-//        props.put("mail.transport.protocol", protocol);
-        System.out.println("mailSender here "+mailSender);
-        return new MailService(mailSender);
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.smtp.auth", authEnabled);
+        props.put("mail.smtp.starttls.enable", starttlsEnabled);
+        props.put("mail.transport.protocol", protocol);
+
+        return new MailService(mailSender, userIdentity);
     }
 
     private JavaMailSenderImpl gmailSender() {
