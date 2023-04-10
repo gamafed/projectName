@@ -1,5 +1,8 @@
 package com.companyName.projectName.login.service;
 
+import com.companyName.projectName.annotaion.SendEmail;
+import com.companyName.projectName.enums.ActionType;
+import com.companyName.projectName.enums.EntityType;
 import com.companyName.projectName.exception.NotFoundException;
 import com.companyName.projectName.exception.UnprocessableEntityException;
 import com.companyName.projectName.login.converter.AppUserConverter;
@@ -21,6 +24,8 @@ public class AppUserService {
         this.repository = repository;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
+
+    @SendEmail(entity = EntityType.APP_USER, action = ActionType.CREATE)
     public AppUserResponse createUser(AppUserRequest request) {
         Optional<AppUser> existingUser = repository.findByEmailAddress(request.getEmailAddress());
         if (existingUser.isPresent()) {

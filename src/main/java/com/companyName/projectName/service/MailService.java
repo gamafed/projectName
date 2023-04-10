@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 //import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import javax.annotation.PreDestroy;
+import org.springframework.stereotype.Service;
 
 @Slf4j
 public class MailService {
