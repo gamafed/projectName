@@ -25,7 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-@SpringBootTest
+//集成测试，会启动完整的应用程序上下文
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BaseTest {
 
   @Autowired protected MockMvc mockMvc;
@@ -35,7 +36,7 @@ public class BaseTest {
   @Autowired protected AppUserRepository appUserRepository;
   protected final ObjectMapper mapper = new ObjectMapper();
   private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-  private final String USER_PASSWORD = "123456";
+  protected final String USER_PASSWORD = "123456";
   protected HttpHeaders httpHeaders;
 
   @BeforeEach
@@ -46,8 +47,8 @@ public class BaseTest {
 
   @AfterEach
   public void clearDB() {
-    productRepository.deleteAll();
-    appUserRepository.deleteAll();
+//    productRepository.deleteAll();
+//    appUserRepository.deleteAll();
   }
 
   protected AppUser createUser(String name, List<UserAuthority> authorities) {

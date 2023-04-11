@@ -19,9 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
-  @Autowired private JWTService jwtService;
+  @Autowired
+  private JWTService jwtService;
 
-  @Autowired private UserDetailsService userDetailsService;
+  @Autowired
+  private UserDetailsService userDetailsService;
 
   @Override
   protected void doFilterInternal(

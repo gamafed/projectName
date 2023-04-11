@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Service
 public class JWTService {
     @Autowired
+    @Lazy
     private AuthenticationManager authenticationManager;
 
     private final String KEY = "TestKeyTestKeyTestKeyTestKeyTestKeyTestKeyTestKey";

@@ -12,6 +12,7 @@ import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.repository.ProductRepository;
 import com.companyName.projectName.request.ProductRequest;
 import com.companyName.projectName.response.ProductResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 public class ProductService {
 
     private UserIdentity userIdentity;
@@ -62,6 +64,7 @@ public class ProductService {
     }
 
     public List<Product> getProducts(ProductQueryParameter param) {
+        log.info("getProducts ProductQueryParameter= "+param);
         String keyword = Optional.ofNullable(param.getKeyword()).orElse("");
         int priceFrom = Optional.ofNullable(param.getPriceFrom()).orElse(0);
         int priceTo = Optional.ofNullable(param.getPriceTo()).orElse(Integer.MAX_VALUE);
