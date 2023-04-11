@@ -26,11 +26,9 @@ public class ProductService {
     @Autowired
     private MockProductDAO productDAO;
     private final ProductRepository repository;
-    private final MailService mailService;
 
-    public ProductService(ProductRepository repository, MailService mailService, UserIdentity userIdentity) {
+    public ProductService(ProductRepository repository, UserIdentity userIdentity) {
         this.repository = repository;
-        this.mailService = mailService;
         this.userIdentity = userIdentity;
     }
 
@@ -38,9 +36,7 @@ public class ProductService {
     public ProductResponse createProduct(ProductRequest request) {
         Product product = ProductConverter.toProduct(request);
         product.setCreator(userIdentity.getId());
-        product = repository.insert(product);
-
-        mailService.sendNewProductMail(product.getId());
+        repository.insert(product);
 
         return ProductConverter.toProductResponse(product);
     }
