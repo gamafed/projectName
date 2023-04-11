@@ -5,6 +5,7 @@ import com.companyName.projectName.modelAttribute.ProductQueryParameter;
 import com.companyName.projectName.request.ProductRequest;
 import com.companyName.projectName.response.ProductResponse;
 import com.companyName.projectName.service.ProductService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,7 +38,11 @@ public class ProductController2 {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductResponse> getProduct(@PathVariable("id") String id) {
+    public ResponseEntity<ProductResponse> getProduct(
+        @Parameter(description = "ID of product.")
+        @PathVariable("id")
+        String id
+    ) {
         ProductResponse product = productService.getProductResponse(id);
         return ResponseEntity.ok(product);
     }

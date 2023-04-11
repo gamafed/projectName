@@ -10,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ProjectNameApplication {
 
 	public static void main(String[] args) {
+		// http://localhost:8080/swagger-ui/index.html
 		ConfigurableApplicationContext context = SpringApplication.run(ProjectNameApplication.class, args);
 		log.info(context.getEnvironment().toString());
 	}

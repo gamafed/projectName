@@ -1,5 +1,6 @@
 package com.companyName.projectName.request;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,7 @@ public class ProductRequest {
     @NotNull
     @Min(value = 0, message = "Price should be greater or equal to 0.")
     private Integer price;
+
+    @Hidden
+    private boolean softDelete;
 }
