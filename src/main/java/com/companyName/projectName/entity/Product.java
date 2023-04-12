@@ -1,5 +1,7 @@
 package com.companyName.projectName.entity;
 
+import com.companyName.projectName.util.CommonUtil;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

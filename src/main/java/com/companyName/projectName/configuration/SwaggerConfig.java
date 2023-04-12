@@ -20,7 +20,7 @@ public class SwaggerConfig {
   @Bean
   public OpenAPI openAPI() {
     Info info = new Info()
-        .title("My Spring Boot API Document")
+        .title("XXX API Document")
         .description("The document will list APIs we practice before.")
         .version("Ver. 1.0.0")
         .contact(new Contact().email("contact@myapi.com").name("API Support Team"))

@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(HttpMethod.POST, "/users").permitAll()
             .antMatchers(HttpMethod.POST, "/auth").permitAll()
             .antMatchers(HttpMethod.POST, "/auth/parse").permitAll()
+            .antMatchers(HttpMethod.DELETE, "/products").permitAll()
             .anyRequest().authenticated()
                 .and()
                 //UsernamePasswordAuthenticationFilter 是用來處理基於帳號密碼的驗證
