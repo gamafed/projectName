@@ -75,6 +75,9 @@ public class BaseTest {
             .andReturn();
 
     JSONObject tokenRes = new JSONObject(result.getResponse().getContentAsString());
+    System.out.println("==");
+    System.out.println(tokenRes.toString(2));
+    System.out.println("==");
     String accessToken = tokenRes.getString("token");
     httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken);
   }
